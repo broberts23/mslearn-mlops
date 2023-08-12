@@ -49,20 +49,11 @@ jobs:
     - name: Run unit tests
       run: | 
         pytest tests/test_train.py
-  approval:
-    runs-on: ubuntu-latest
-    needs: [unit-test]
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Hold for approval
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          continue-after-seconds: 300 # wait for five minutes, if no approval, fail the job.
   train:
     runs-on: ubuntu-latest
-    needs: [approval]
+    needs: [unit-test]
+    environment:
+      name: training-environment
     steps:
       - name: Check out repo
         uses: actions/checkout@main
