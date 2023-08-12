@@ -52,7 +52,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     needs: [unit-test]
-    name: Example workflow for Python-3.8 using Snyk
+    name: Synk scan
     steps:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
