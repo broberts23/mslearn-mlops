@@ -46,7 +46,7 @@ jobs:
         python -m pip install pytest
     - name: Run unit tests
       run: | 
-        pytest tests/test_model.py
+        pytest tests/test_train.py
   approval:
     runs-on: ubuntu-latest
     needs: [unit-test]
