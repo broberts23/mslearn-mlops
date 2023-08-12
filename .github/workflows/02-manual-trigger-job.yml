@@ -49,8 +49,6 @@ jobs:
     - name: Run unit tests
       run: | 
         pytest tests/test_train.py
-        name: Example workflow for Python using Snyk
-        on: push
   security:
     runs-on: ubuntu-latest
     needs: [unit-test]
