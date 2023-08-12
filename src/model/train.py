@@ -3,7 +3,6 @@
 import argparse
 import glob
 import os
-import mlflow
 
 import pandas as pd
 
@@ -14,7 +13,7 @@ from mlflow.sklearn import autolog
 
 # define functions
 def main(args):
-    # enable autologging
+    # enable mlflow autologging
     autolog()
 
     # read data
