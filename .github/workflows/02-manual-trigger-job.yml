@@ -100,4 +100,4 @@ jobs:
          az ml job create --file src/job-prod.yml 
          --workspace-name ${{ env.workspace-name }} 
          --resource-group ${{ env.resource-group }}
-         --stream # --stream causes the step to go on, as long as the model trains.
+         --stream # output job logs to the console
