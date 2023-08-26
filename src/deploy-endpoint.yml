@@ -1,6 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: mlflow-deployment
 endpoint_name: mlflow-endpoint # Name of the endpoint to deploy the model to
-model: azureml:my-model@latest
+model: 
+  path: azureml:my-model@latest
+  type: mlflow
 instance_type: Standard_F2s_v2
 instance_count: 1
