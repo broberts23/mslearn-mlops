@@ -74,3 +74,5 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Trigger Azure ML job
         run:  az ml online-deployment create --name ${{ env.deployment-name }} --endpoint ${{ env.endpoint-name }} -f src/mlflow-deployment.yml --all-traffic
+
+        
