@@ -1,0 +1,9 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.22.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-PYTHON-MLFLOW-5811861:
+    - '* > mlflow':
+        reason: no upgrade available
+        expires: '2024-01-29T11:54:16.639Z'
+patch: {}
