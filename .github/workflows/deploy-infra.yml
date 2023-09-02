@@ -11,6 +11,8 @@ env:
 jobs:
     bicep-whatif:
       runs-on: ubuntu-latest
+      environment:
+        name: prod
       steps:
         - name: Checkout code
           uses: actions/checkout@v3
