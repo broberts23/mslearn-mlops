@@ -1,0 +1,39 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: your-webapp-name
+  AZURE_ML_ENDPOINT_URL: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score'
+  AZURE_KEY: ${{ secrets.API_KEY }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r src\web\myapp\requirements.txt
+
+    - name: Zip the application files
+      run: zip -r myapp.zip .
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: myapp.zip
