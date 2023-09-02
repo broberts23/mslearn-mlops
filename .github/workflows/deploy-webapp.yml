@@ -1,9 +1,8 @@
 name: Deploy to Azure Web App
 
 on:
-  push:
-    branches:
-      - main
+    pull_request_target:
+      types: [labeled]
 
 env:
   AZURE_WEBAPP_NAME: your-webapp-name
