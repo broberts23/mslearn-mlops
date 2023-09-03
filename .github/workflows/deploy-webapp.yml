@@ -27,7 +27,7 @@ jobs:
           python-version: 3.x
       - name: Install dependencies
         run: |
-          pip install -r src\web\myapp\requirements.txt
+          pip install -r src/web/myapp/requirements.txt
       - name: Deploy App
         uses: azure/webapps-deploy@v2
         with:
