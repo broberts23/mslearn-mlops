@@ -10,6 +10,7 @@ env:
   
 jobs:
     bicep-whatif:
+      name: 'Bicep What-If'
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
@@ -26,7 +27,7 @@ jobs:
         - name: What-If
           uses: azure/arm-deploy@v1
           with:
-            scope: resource-group
+            scope: resourcegroup
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
@@ -52,12 +53,11 @@ jobs:
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             
         # Deploy
-        - name: "Bicep Deployment"
-          uses: Azure/cli@v1
+        - name: Deploy
+          uses: azure/arm-deploy@v1
           with:
-            inlineScript: |
-              az deployment group create \
-              --name deploy-${{ github.run_id }} \
-              --template-file src\infra\main.bicep \
-              --resource-group ${{ env.resource-group }}
+            scope: resourcegroup
+            failOnStdErr: false
+            resourceGroupName: ${{ env.resource-group }}
+            template: src\infra\main.bicep
   
