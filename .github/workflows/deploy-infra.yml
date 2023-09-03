@@ -11,8 +11,6 @@ env:
 jobs:
     bicep-whatif:
       runs-on: ubuntu-latest
-      environment:
-        name: prod
       steps:
         - name: Checkout code
           uses: actions/checkout@v3
@@ -25,58 +23,17 @@ jobs:
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   
         # Run what-if deployment
-        - name: "What-If"
-          uses: Azure/cli@v1
+        - name: What-If
+          uses: azure/arm-deploy@v1
           with:
-            inlineScript: |
-                az deployment group what-if
-                --name whatif-${{ github.run_id }} \
-                --template-file src\infra\main.bicepp \
-                --resource-group ${{ env.resource-group }} > whatif
-  
-        - name: Create String Output
-          id: whatif-string
-          run: |
-            WHATIF=$(cat whatif)
-            
-            delimiter="$(openssl rand -hex 8)"
-            echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
-            echo "## Whatif Output" >> $GITHUB_OUTPUT
-            echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo '```' >> $GITHUB_OUTPUT
-            echo "$WHATIF" >> $GITHUB_OUTPUT
-            echo '```' >> $GITHUB_OUTPUT
-            echo "</details>" >> $GITHUB_OUTPUT
-            echo "${delimiter}" >> $GITHUB_OUTPUT
-  
-        # Publish Terraform Plan as task summary
-        - name: Publish Whatif to Task Summary
-          env:
-            SUMMARY: ${{ steps.whatif-string.outputs.summary }}
-          run: |
-            echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-        
-        # If this is a PR post the changes
-        - name: Push Whatif Output to PR
-          if: github.ref != 'refs/heads/main'
-          uses: actions/github-script@v6
-          env:
-            SUMMARY: "${{ steps.whatif-string.outputs.summary }}"
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              const body = `${process.env.SUMMARY}`;
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-              })
+            scope: resource-group
+            failOnStdErr: false
+            resourceGroupName: ${{ env.resource-group }}
+            template: src\infra\main.bicep
+            additionalArguments: --what-if
   
     bicep-deploy:
       name: 'Bicep Deploy'
-      if: github.ref == 'refs/heads/main'
       runs-on: ubuntu-latest
       environment: prod
       needs: [bicep-whatif]
@@ -101,6 +58,6 @@ jobs:
             inlineScript: |
               az deployment group create \
               --name deploy-${{ github.run_id }} \
-              --template-file src\infra\main.bicepp \
+              --template-file src\infra\main.bicep \
               --resource-group ${{ env.resource-group }}
   
