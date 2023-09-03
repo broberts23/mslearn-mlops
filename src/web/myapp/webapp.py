@@ -95,10 +95,10 @@ def index():
 
             # Display result
             if result[0] == 1:
-                return render_template("result.html", result="The user is diabetic.")
+                return render_template("result.html", result="The patient is diabetic.")
             else:
                 return render_template(
-                    "result.html", result="The user is not diabetic."
+                    "result.html", result="The patient is not diabetic."
                 )
         except urllib.error.HTTPError as error:
             print("The request failed with status code: " + str(error.code))
