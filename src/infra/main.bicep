@@ -1,5 +1,6 @@
 param location string = resourceGroup().location
 param keyVaultName string = 'myworkspkeyvault43303873'
+@secure()
 param API_KEY string
 param AZURE_ML_ENDPOINT_URL string
 
