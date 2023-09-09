@@ -6,19 +6,23 @@ param AZURE_ML_ENDPOINT_URL string
 
 resource kv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   name: keyVaultName
-  resource apiKey 'secrets' = {
-    name: 'API_KEY'
-    properties: {
-      contentType: 'text/plain'
-      value: API_KEY
-    }
+}
+
+resource apiKey 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  name: 'API_KEY'
+  parent: kv
+  properties: {
+    contentType: 'text/plain'
+    value: API_KEY
   }
-  resource Url 'secrets' = {
-    name: 'AZURE_ML_ENDPOINT_URL'
-    properties: {
-      contentType: 'text/plain'
-      value: AZURE_ML_ENDPOINT_URL
-    }
+}
+
+resource Url 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  name: 'AZURE_ML_ENDPOINT_URL'
+  parent: kv
+  properties: {
+    contentType: 'text/plain'
+    value: AZURE_ML_ENDPOINT_URL
   }
 }
 
