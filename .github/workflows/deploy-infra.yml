@@ -10,6 +10,7 @@ env:
     ml-workspace: myWorkspace # name of the Azure Machine Learning workspace
     mlEndpointUrl: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score' # name of the Azure Machine Learning endpoint
     mlEndpointName: mlflow-endpoint-1 # name of the Azure Machine Learning endpoint
+    keyVaultName: 'myworkspkeyvault43303873'
   
 jobs:
     bicep-whatif:
@@ -34,6 +35,11 @@ jobs:
             ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.mlEndpointName }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
             echo ::add-mask::$ENDPOINT_KEY
             echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
+        
+        - name: add secret to key vault
+          run: |
+            az keyvault secret set --vault-name ${{ env.keyVaultName }} --name 'API_KEY'  --value ${{ env.ENDPOINT_KEY }}
+            az keyvault secret set --vault-name ${{ env.keyVaultName }} --name 'AZURE_ML_ENDPOINT_URL' --value ${{ env.mlEndpointUrl }}
   
         # Run what-if deployment
         - name: What-If
@@ -43,7 +49,6 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
-            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.mlEndpointUrl }} API_KEY=${{ env.ENDPOINT_KEY }}'
             additionalArguments: --what-if
   
     bicep-deploy:
@@ -66,12 +71,7 @@ jobs:
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         - name: Install az ml extension
           run: az extension add -n ml -y
-  
-        - name: Retrieve API key
-          run: |
-            ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.mlEndpointName }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
-            echo ::add-mask::$ENDPOINT_KEY
-            echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
+
         # Deploy
         - name: Deploy
           uses: azure/arm-deploy@v1
@@ -80,5 +80,4 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
-            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.mlEndpointUrl }} API_KEY=${{ env.ENDPOINT_KEY }}'
   

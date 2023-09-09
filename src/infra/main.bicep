@@ -1,30 +1,5 @@
 param location string = resourceGroup().location
 param keyVaultName string = 'myworkspkeyvault43303873'
-@secure()
-param API_KEY string
-param AZURE_ML_ENDPOINT_URL string
-
-resource kv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
-  name: keyVaultName
-}
-
-resource apiKey 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
-  name: 'API_KEY'
-  parent: kv
-  properties: {
-    contentType: 'text/plain'
-    value: API_KEY
-  }
-}
-
-resource Url 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
-  name: 'AZURE_ML_ENDPOINT_URL'
-  parent: kv
-  properties: {
-    contentType: 'text/plain'
-    value: AZURE_ML_ENDPOINT_URL
-  }
-}
 
 resource exampleAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: 'mlflow-ASP'
@@ -37,6 +12,10 @@ resource exampleAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
     tier: 'Basic'
     name: 'B1'
   }
+}
+
+resource kv 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
+  name: keyVaultName
 }
 
 resource exampleAppService 'Microsoft.Web/sites@2022-09-01' = {
@@ -59,11 +38,11 @@ resource exampleAppServiceConfig 'Microsoft.Web/sites/config@2022-09-01' = {
     appSettings: [
       {
         name: 'API_KEY'
-        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::apiKey.name})'
+        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=API_KEY'
       }
       {
         name: 'AZURE_ML_ENDPOINT_URL'
-        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::Url.name})'
+        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=AZURE_ML_ENDPOINT_URL'
       }
       {
         name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
