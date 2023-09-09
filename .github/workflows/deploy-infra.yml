@@ -68,10 +68,10 @@ jobs:
           run: az extension add -n ml -y
   
         - name: Retrieve API key
-            run: |
-              ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.mlEndpointName }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
-              echo ::add-mask::$ENDPOINT_KEY
-              echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
+          run: |
+            ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.mlEndpointName }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
+            echo ::add-mask::$ENDPOINT_KEY
+            echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
         # Deploy
         - name: Deploy
           uses: azure/arm-deploy@v1
