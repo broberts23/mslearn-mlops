@@ -7,6 +7,8 @@ permissions:
   
 env:
     resource-group: myResourceGroup # name of the Azure resource group
+    ml-workspace: myWorkspace # name of the Azure Machine Learning workspace
+    ml-endpoint: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score' # name of the Azure Machine Learning endpoint
   
 jobs:
     bicep-whatif:
@@ -22,6 +24,12 @@ jobs:
             client-id: ${{ secrets.AZURE_CLIENT_ID }}
             tenant-id: ${{ secrets.AZURE_TENANT_ID }}
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+        - name: Retrieve API key
+          run: |
+            ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.ml-endpoint }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
+            echo ::add-mask::$ENDPOINT_KEY
+            echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
   
         # Run what-if deployment
         - name: What-If
@@ -31,6 +39,7 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
+            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.ml-endpoint }} API_KEY=${{ env.ENDPOINT_KEY }}'
             additionalArguments: --what-if
   
     bicep-deploy:
@@ -51,7 +60,7 @@ jobs:
             client-id: ${{ secrets.AZURE_CLIENT_ID }}
             tenant-id: ${{ secrets.AZURE_TENANT_ID }}
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            
+        
         # Deploy
         - name: Deploy
           uses: azure/arm-deploy@v1
@@ -60,4 +69,5 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
+            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.ml-endpoint }} API_KEY=${{ env.ENDPOINT_KEY }}'
   

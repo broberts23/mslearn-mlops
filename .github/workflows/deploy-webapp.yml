@@ -8,8 +8,6 @@ permissions:
 env:
   AZURE_WEBAPP_NAME: mlflow-appservice # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: 'src/web/myapp' # set this to the path to your web app project, defaults to the repository root
-  AZURE_ML_ENDPOINT_URL: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score'
-  API_KEY: ${{ secrets.API_KEY }}
 
 jobs:
   build:
