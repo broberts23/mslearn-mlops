@@ -38,11 +38,11 @@ resource exampleAppServiceConfig 'Microsoft.Web/sites/config@2022-09-01' = {
     appSettings: [
       {
         name: 'API_KEY'
-        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=API_KEY'
+        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=apiKey'
       }
       {
         name: 'AZURE_ML_ENDPOINT_URL'
-        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=AZURE_ML_ENDPOINT_URL'
+        value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=endpointUrl'
       }
       {
         name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
