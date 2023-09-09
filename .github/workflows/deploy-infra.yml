@@ -73,5 +73,5 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
-            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.ml-endpoint }} API_KEY=${{ env.ENDPOINT_KEY }}'
+            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.mlEndpointUrl }} API_KEY=${{ env.ENDPOINT_KEY }}'
   
