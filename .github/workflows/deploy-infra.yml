@@ -8,7 +8,8 @@ permissions:
 env:
     resource-group: myResourceGroup # name of the Azure resource group
     ml-workspace: myWorkspace # name of the Azure Machine Learning workspace
-    ml-endpoint: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score' # name of the Azure Machine Learning endpoint
+    mlEndpointUrl: 'https://mlflow-endpoint-1.australiaeast.inference.ml.azure.com/score' # name of the Azure Machine Learning endpoint
+    mlEndpointName: mlflow-endpoint-1 # name of the Azure Machine Learning endpoint
   
 jobs:
     bicep-whatif:
@@ -30,7 +31,7 @@ jobs:
 
         - name: Retrieve API key
           run: |
-            ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.ml-endpoint }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
+            ENDPOINT_KEY=$(az ml online-endpoint get-credentials -n ${{ env.mlEndpointName }} -g ${{ env.resource-group }} -w ${{ env.ml-workspace }} -o tsv --query primaryKey)
             echo ::add-mask::$ENDPOINT_KEY
             echo ENDPOINT_KEY=$ENDPOINT_KEY >> $GITHUB_ENV
   
@@ -42,7 +43,7 @@ jobs:
             failOnStdErr: false
             resourceGroupName: ${{ env.resource-group }}
             template: src\infra\main.bicep
-            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.ml-endpoint }} API_KEY=${{ env.ENDPOINT_KEY }}'
+            parameters: 'AZURE_ML_ENDPOINT_URL=${{ env.mlEndpointUrl }} API_KEY=${{ env.ENDPOINT_KEY }}'
             additionalArguments: --what-if
   
     bicep-deploy:
