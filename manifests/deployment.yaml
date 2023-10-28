@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: PythonApp
+  labels:
+    app: PythonApp
+  namespace: pyhonapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: PythonApp
+  template:
+    metadata:
+      labels:
+        app: PythonApp
+    spec:
+      containers:
+        - name: PythonApp
+          image: automateddeployments.azurecr.io/image-workflow-1698478296862:latest
+          ports:
+            - containerPort: 8000
