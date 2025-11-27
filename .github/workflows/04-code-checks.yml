@@ -6,6 +6,8 @@ on:
 jobs:
   job1:
     name: linting
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - name: Check out repo
